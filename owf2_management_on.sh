@@ -30,5 +30,3 @@ uci set wireless.public.encryption='none'
 
 uci commit
 reload_config
-
-exit 0

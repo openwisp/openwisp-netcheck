@@ -7,5 +7,3 @@ uci delete wireless.public
 
 uci commit
 reload_config
-
-exit 0
