@@ -24,8 +24,8 @@ uci set wireless.public=wifi-iface
 uci set wireless.public.device='radio0'
 uci set wireless.public.mode='ap'
 uci set wireless.public.network='public'
-uci set wireless.public.ifname='public'
-uci set wireless.public.ssid=`echo $DEFAULT_SSID`
+uci set wireless.public.ifname='owf2'
+uci set wireless.public.ssid=$DEFAULT_SSID
 uci set wireless.public.encryption='none'
 
 uci commit
