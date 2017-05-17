@@ -1,15 +1,17 @@
 #!/bin/sh
 
+RADIO_IFACE=owf2
+VPN_IFACE=data
 INTERVAL=120
 
 vpn_watchdog() {
-	if [ -h "/sys/class/net/owf2" ]; then
+	if [ -h "/sys/class/net/$RADIO_IFACE" ]; then
                 _ssid_status=1
         else
                 _ssid_status=0
         fi
 
-	if [ -h "/sys/class/net/data" ]; then
+	if [ -h "/sys/class/net/$VPN_IFACE" ]; then
 		_net_status=0
 	else
 	        _net_status=1
