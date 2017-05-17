@@ -21,7 +21,7 @@ logger	-s "OpenWISP network check: started" \
 	-t openwisp \
 	-p daemon.info
 
-# Loop
+# Network check loop
 while :
 
 do
