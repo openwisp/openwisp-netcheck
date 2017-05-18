@@ -1,5 +1,6 @@
 #!/bin/sh
 
+RADIO_IFACE=$(uci get openwisp_netcheck.radio_iface.name)
 ETH0_MAC=`ifconfig eth0 | grep HWaddr | cut -d':' -f2- | cut -d' ' -f4`
 DEFAULT_SSID="owf2-$ETH0_MAC"
 
@@ -24,7 +25,7 @@ uci set wireless.public=wifi-iface
 uci set wireless.public.device='radio0'
 uci set wireless.public.mode='ap'
 uci set wireless.public.network='public'
-uci set wireless.public.ifname='owf2'
+uci set wireless.public.ifname=$RADIO_IFACE
 uci set wireless.public.ssid=$DEFAULT_SSID
 uci set wireless.public.encryption='none'
 
