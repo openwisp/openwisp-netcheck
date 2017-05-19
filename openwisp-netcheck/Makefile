@@ -31,12 +31,22 @@ endef
 
 define Package/openwisp-netcheck/install
 	$(INSTALL_DIR) \
-		$(1)/etc/openwisp-netcheck\
+		$(1)/etc/init.d \
 
-	$(CP) -r files/* \
-		$(1)/etc/openwisp-netcheck/
+	$(INSTALL_DIR) \
+		$(1)/etc/config \
 
-	$(CP) ../VERSION $(1)/etc/openwisp-netcheck/
+	$(INSTALL_DIR) \
+		$(1)/usr/sbin \
+
+	$(CP)  files/openwisp-netcheck.init \
+		$(1)/etc/init.d/openwisp_netcheck
+
+	$(CP)  files/openwisp-netcheck.config \
+		$(1)/etc/config/openwisp_netcheck
+
+	$(CP) -r files/sbin/* \
+		$(1)/usr/sbin/
 
 endef
 
