@@ -1,22 +1,33 @@
 #!/bin/sh
 
-RADIO_IFACE=$(uci get openwisp_netcheck.radio_iface.name)
 VPN_IFACE=$(uci get openwisp_netcheck.vpn_iface.name)
+RADIO_IFACE=$(uci get openwisp_netcheck.radio_iface.name)
 INTERVAL=$(uci get openwisp_netcheck.interval.time)
 
 net_watchdog() {
-	if [ -h "/sys/class/net/$RADIO_IFACE" ]; then
-                _ssid_status=1
-        else
-                _ssid_status=0
-        fi
 
 	if [ -h "/sys/class/net/$VPN_IFACE" ]; then
-		_net_status=0
+		_net_status=1
 	else
-	        _net_status=1
+		_net_status=0
 	fi
 
+	if [ -h "/sys/class/net/$RADIO_IFACE" ]; then
+		_ssid_status=1
+	else
+		_ssid_status=0
+	fi
+
+	# VPN data is up & MNGM SSID is up => MNGM SSID down
+	if [[ "$_net_status" -eq "1" && "$_ssid_status" -eq "1" ]]; then
+		ret=0
+	# VPN data is down & MNGM SSID is down => MNGM SSID up
+	elif [[ "$_net_status" -eq "0" && "$_ssid_status" -eq "0" ]]; then
+		ret=1
+	# else sleep
+	else
+		ret=2
+	fi
 }
 
 # Network check loop
@@ -26,7 +37,7 @@ do
 
 net_watchdog
 
-	if [[ "$_net_status" -eq "0" && "$_ssid_status" -eq "1" ]]; then
+	if [ "$ret" -eq "0" ]; then
 		.$PROG_DIR/owf2_management_off
 		_ssid_status=0
 		logger	-s "Management SSID down" \
@@ -34,14 +45,13 @@ net_watchdog
 			-p daemon.info
 		sleep 5
 
-	elif [[ "$_net_status" -eq "1" && "$_ssid_status" -eq "0" ]]; then
+	elif [ "$ret" -eq "1" ]; then
 		.$PROG_DIR/owf2_management_on
 		_ssid_status=1
-                logger	-s "Management SSID up" \
+		logger	-s "Management SSID up" \
 			-t openwisp-netcheck \
 			-p daemon.info
 		sleep 5
-
 	else
 		sleep $INTERVAL
 	fi
