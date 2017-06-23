@@ -30,11 +30,23 @@ net_watchdog() {
 	fi
 }
 
+vpn_discover() {
+
+	for dir in $(ls -1 /sys/class/net/); do
+		# Check if interface is a bridge AND also a VPN
+		if [ -h "/sys/class/net/$dir/master" ] && [ -f "/sys/class/net/$dir/tun_flags" ]; then
+			VPN_IFACE=$dir
+		fi
+	done
+
+}
+
 # Network check loop
 while :
 
 do
 
+vpn_discover
 net_watchdog
 
 	if [ "$ret" -eq "0" ]; then
